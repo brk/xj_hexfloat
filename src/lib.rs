@@ -39,6 +39,8 @@ impl<T> DerefMut for HexFloat<T> {
 impl<T: SupportedFloat> fmt::Display for HexFloat<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = format!("{}", self.0);
+        // hexfloat2 emits "0x0.0p0" for zero; strip the fractional part.
+        let s = s.replace("0x0.0p", "0x0p");
         match s.find('p') {
             Some(p) if !matches!(s.as_bytes().get(p + 1), Some(b'+') | Some(b'-')) => {
                 f.write_str(&s[..=p])?;
@@ -69,7 +71,8 @@ mod tests {
 
     #[test]
     fn zero_and_special_values() {
-        assert_eq!(format!("{}", HexFloat::<f32>::from(0.0f32)), "0x0.0p+0");
+        assert_eq!(format!("{}", HexFloat::<f32>::from(0.0f32)), "0x0p+0");
+        assert_eq!(format!("{}", HexFloat::<f32>::from(-0.0f32)), "-0x0p+0");
         assert_eq!(format!("{}", HexFloat::<f32>::from(f32::INFINITY)), "inf");
         assert_eq!(format!("{}", HexFloat::<f32>::from(f32::NAN)), "NaN");
     }

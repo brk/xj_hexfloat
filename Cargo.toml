@@ -1,6 +1,6 @@
 [package]
 name = "xj_hexfloat"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "Wrapper around `hexfloat2` with POSIX-matching output"
 license = "MIT"
